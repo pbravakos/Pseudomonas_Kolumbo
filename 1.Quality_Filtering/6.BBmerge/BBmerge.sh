@@ -6,8 +6,6 @@
 # #SBATCH --mem-per-cpu=6400
 #SBATCH --job-name="BBmerge"
 #SBATCH --output=BBmerge_job_%j.out
-#SBATCH --mail-user=pbravakos@hcmr.gr
-#SBATCH --mail-type=FAIL,END
 
 # for calculating the amount of time the job takes
 begin=`date +%s`

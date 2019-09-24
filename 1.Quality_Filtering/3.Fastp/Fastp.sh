@@ -5,9 +5,6 @@
 # #SBATCH --mem=128000
 #SBATCH --job-name="Fastp"
 #SBATCH --output=Fastp_job_%j.out
-#SBATCH --mail-user=pbravakos@hcmr.gr
-#SBATCH --mail-type=FAIL,END
-#SBATCH --no-requeue
 
 # for calculating the amount of time the job takes
 begin=`date +%s`

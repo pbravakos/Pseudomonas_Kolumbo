@@ -6,8 +6,6 @@
 #SBATCH --job-name="BBnorm"
 #SBATCH --output=BBnorm_job_%j.out
 #SBATCH --mail-user=pbravakos@hcmr.gr
-#SBATCH --mail-type=FAIL,END
-#SBATCH --no-requeue
 
 
 # Some job specific info

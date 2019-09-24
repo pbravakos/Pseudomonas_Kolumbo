@@ -6,8 +6,6 @@
 # #SBATCH --mem=128000
 #SBATCH --job-name="Prinseq_after_trimming"
 #SBATCH --output=Prinseq_after_trimming_job_%j.out
-#SBATCH --mail-user=pbravakos@hcmr.gr
-#SBATCH --mail-type=FAIL,END
 
 # for calculating the amount of time the job takes
 begin=`date +%s`
