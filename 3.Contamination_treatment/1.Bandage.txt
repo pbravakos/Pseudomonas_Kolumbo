@@ -1,0 +1,4 @@
+1) We download from NCBI, the best blast hits for each genome of the 16S and 23S rDNA (retrieved from Barnap). We select the best hits and treat them as Reference genomes. 
+2) In Bandage we blast the scaffolds with the genomes downloaded from NCBI. 
+3) We select and download scaffolds manually from Bandage  (from the Spades scaffolds output). The selection is based on orientation and best the colored blast hits.
+
