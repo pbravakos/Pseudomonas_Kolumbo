@@ -34,7 +34,7 @@ generalInfo () {
 	
 	This script takes as input one argument. 
 	For Strain 01 that would be: 
-	$0 Strain01
+	./$0 Strain01
 	This script runs from the master folder of Pilon and then we change directory to the folder of each specific Strain folder.
 	
 	NOTE:
