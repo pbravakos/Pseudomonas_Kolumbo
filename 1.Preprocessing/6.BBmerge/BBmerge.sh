@@ -39,7 +39,7 @@ END
 
 
 # Check that an argument has been given in the correct form.
-if [[ $# -ne 1  &&  ! $1 =~ Strain[0-9][0-9] ]]; then
+if [[ $# -ne 1  ||  ! $1 =~ Strain[0-9][0-9] ]]; then
    echo "Exactly one argument should be given, which has to be in the form of 'StrainXX' where X is a number from 0 up to 9!" >&2
    generalInfo >&2
    exit 1
