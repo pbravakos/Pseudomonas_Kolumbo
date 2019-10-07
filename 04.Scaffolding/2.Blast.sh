@@ -29,7 +29,7 @@ generalInfo () {
 
 	This script takes as input one argument. It runs in the directory ${HOME}/Pseudomonas/Blast/CLA and then we change directory to the directory of each specific Strain.	
 	For Strain 01 the correct usage is: 
-	$0 Strain01
+	./$0 Strain01
 
 	We are running Blast on the scaffolds that we were created by CLA (which was after the Spades Assembly!).
 
