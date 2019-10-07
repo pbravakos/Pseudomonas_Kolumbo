@@ -37,7 +37,7 @@ generalInfo () {
 	This script takes as input one argument. It runs from the master folder of Anvio and then we change directory to the directory of each specific Strain.
 	
 	For Strain 01 the correct usage is: 
-	$0 Strain01
+	./$0 Strain01
 
 	IMPORTANT!
 	We have already run the Rast annotation online at http://rast.nmpdr.org/

@@ -33,7 +33,7 @@ generalInfo () {
 
 	This script takes as input one argument. 
 	For Strain 01 that would be: 
-	script.sh Strain01
+	sbatch $0 Strain01
 	This script runs from the master folder of Anvio and then we change directory to the folder of each specific Strain folder.
 
 	IMPORTANT!

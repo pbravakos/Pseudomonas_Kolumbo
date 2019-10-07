@@ -31,7 +31,7 @@ generalInfo () {
 	
 	This script takes as input one argument. 
 	For Strain 01 that would be: 
-	$0 Strain01
+	./$0 Strain01
 		
 	This script runs from the master folder of Prokka and then we change directory to the folder of each specific Strain folder.
 	We assume that in the master folder there are already folders named Strain01 Strain02 etc.
