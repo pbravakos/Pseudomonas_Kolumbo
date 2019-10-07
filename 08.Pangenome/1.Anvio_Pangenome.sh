@@ -35,7 +35,7 @@ echo
 	http://merenlab.org/tutorials/infant-gut/#chapter-v-pangenomics 
 
 	This script run in the Anvio Pangenomics Prokka directory. To run the script, we need to have all the needed files and dependencies (blastp, mcl) and then we simply run the command:
-	./script.sh
+	./$0
 
 	IMPORTANT
         We have already created the contigs DB from the Prokka output.
