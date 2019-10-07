@@ -2,8 +2,8 @@
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
-#SBATCH --job-name="BBmerge"
-#SBATCH --output=BBmerge_job_%j.out
+#SBATCH --job-name="KmerGenie_BWA"
+#SBATCH --output=KmerGenie_BWA_job_%j.out
 
 
 # for calculating the amount of time the job takes
@@ -28,10 +28,15 @@ generalInfo () {
 	
 	This script takes as input one argument. 
 	For Strain 01 that would be: 
-	$0 Strain01
-	This script runs from the master folder of BBmerge and then we change directory to the folder of each specific Strain folder.
+	./$0 Strain01
+	This script runs from the master folder of KmerGenie and then we change directory to the folder of each specific Strain folder.
 
-	BBmerge will try to merge paired end sequences. For more information look https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmerge-guide/
+	KmerGenie estimates the best k-mer length for genome de novo assembly. http://kmergenie.bx.psu.edu/
+	
+	We run kmerGenie on the BWA output fastq files, which supposedly contain only our genome of interest.
+	
+	NOTE:	
+	We are working here with KmerGenie version 1.7016 because later versions do not run on the server.
 
 END
 }
@@ -56,31 +61,57 @@ StrainX=$1
 StrX=${StrainX/ain/}
 StrNum=${StrainX/Strain/}
 
-BBMapDir=${HOME}/Software/bbmap
-ReadsDir=${HOME}/Pseudomonas/BWA/${StrainX}
+KmergenieDir=${HOME}/Software/kmergenie-1.7016
 
-# Next we wil define the $DateRun parameter based on the Strain number input.
+ReadsFileTemplate1=Reads_after_BWA.template
+ReadsFileTemplate2=Reads_second_Run_after_BWA.template
+ReadsFileStrainX=${StrainX}_after_BWA_reads.txt
+
+# Next we wil define the $DateRun parameter based on the Strain number input, which is needed for the reads file creation.
 if [[ $StrNum =~ "18"|"19"|"20"|"21"|"22"|"23"|"24"|"25" ]]; then
     DateRun=Nov18b
 elif [[ $StrNum =~ "05"|"08" ]]; then
-    DateRun=Jun18 # This has to be changed to "Jun18" or "Nov18a", and run this script twice, one for each case.
+    DateRun=Nov18a
+    DateRun2=Jun18  # These Strains have been sequenced more than one time, and we have fastq files from each run.
 else
     echo "$StrainX has not been defined in the if else bash expression. Please check it to resolve the issue."  >&2
     exit 1
 fi
 
-R1=${StrX}_${DateRun}_PE1_ONLY_genome.fastq
-R2=${StrX}_${DateRun}_PE2_ONLY_genome.fastq
 
-# Parameters for BBmerge that can change
-MinQual=14 # Ignore bases with quality below this.
-Mismatch=2  # Do not allow more than this many mismatches.
+#==================================================================================================
+# Sanity checks
+if [[ ! -e ${ReadsFileTemplate1} ]]; then
+    echo "$ReadsFileTemplate cannot be found in ${SLURM_SUBMIT_DIR}. Please upload it." >&2
+    exit 1
+fi
 
 #==================================================================================================
 
 cd ${StrainX}
 
-${BBMapDir}/bbmerge.sh in1=${ReadsDir}/${R1} in2=${ReadsDir}/${R2} out=${StrX}_${DateRun}_after_BWA_merged.fastq outu1=${StrX}_${DateRun}_after_BWA_Read1_unmerged.fastq outu2=${StrX}_${DateRun}_after_BWA_Read2_unmerged.fastq ihist=${StrX}_${DateRun}_after_BWA_length_hist.txt ordered=t mismatches=${Mismatch} ultrastrict=t minq=${MinQual} t=$SLURM_NTASKS
+# Create a new reads file with bash parameter substitution.
+( echo "cat <<EOF >${ReadsFileStrainX}";
+  cat $SLURM_SUBMIT_DIR/${ReadsFileTemplate1};
+  if [[ $StrNum =~ "05"|"08" ]]; then  # Here we also add the reads from the first MiSeq Run in the reads file, but only for Strains that actually we actually have fastq files from more than one Miseq runs.
+      cat $SLURM_SUBMIT_DIR/${ReadsFileTemplate2};
+  fi
+  echo "EOF"; 
+) > temp.txt
+. temp.txt # Source the temp.txt file, to actually create the desired reads file!
+
+#rm temp.txt # The temporary file can be deleted since we do not need it anymore!
+
+# Declare an array with all the kmers that we want kmergenie to search for
+kmers=( 65 85 97 101 119 125 133 155 187 )
+
+# Run kmergenie for each item in the array. 
+for i in "${kmers[@]}"
+do
+${KmergenieDir}/kmergenie ${ReadsFileStrainX} -k $i -t $SLURM_NTASKS -o ${StrX}_after_BWA_kmer_${i}.hist
+done
+
+rm *.histo *.pdf *.dat
 
 echo
 echo "==============================="

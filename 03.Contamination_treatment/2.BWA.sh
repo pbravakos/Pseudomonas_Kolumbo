@@ -27,7 +27,7 @@ generalInfo () {
 
 	This script takes as input one argument. It runs from the master folder of BWA and then we change directory to the directory of the Strain we are interested in.	
 	For Strain01 the correct usage is: 
-	$0 Strain01
+	./$0 Strain01
 
 	This is BWA to retrieve genomes. We are are mapping the Prinseq filtered fastq reads to the Spades scaffolds selected by Bandage manually. 
 	
