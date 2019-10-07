@@ -2,7 +2,8 @@
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
-#SBATCH --job-name="Barnap"
+#SBATCH --job-name="KmerGenie"
+#SBATCH --output=KmerGenie_job_%j.out
 
 # for calculating the amount of time the job takes
 begin=`date +%s`
@@ -25,10 +26,14 @@ generalInfo () {
     cat <<END
 	
 	This script takes as input one argument. 
-	For Strain 01 that would be: 
-	$0 Strain01
-	This script runs from the master folder of Barnap and then we change directory to the folder of each specific Strain folder.
-	As input we use here the Spades output, contig fasta files.
+	For Strain01 that would be: 
+	./$0 Strain01
+	This script runs from the master folder of KmerGenie and then we change directory to the folder of each specific Strain folder.
+
+	KmerGenie estimates the best k-mer length for genome de novo assembly. http://kmergenie.bx.psu.edu/
+	
+	NOTE:	
+	We are working here with KmerGenie version 1.7016 because later versions do not run on the server.
 
 END
 }
@@ -51,27 +56,44 @@ ${HOME}/sbatch --dependency=afterany:$SLURM_JOB_ID Move_Slurm_output_files.sh $S
 # INITIAL PARAMETERS
 StrainX=$1
 StrX=${StrainX/ain/}
+KmergenieDir=${HOME}/Software/kmergenie-1.7016
+DateRun=Nov18b
 
-BarrnapDir=${HOME}/Software/barrnap/bin
+ReadsFileTemplate=Reads.template
+ReadsFileStrainX=${StrainX}_${DateRun}_reads.txt
 
-InputFasta=${HOME}/Pseudomonas/Spades/${StrainX}/1sttrial/scaffolds.fasta
+if [[ ! -e ${ReadsFileTemplate} ]]; then
+    echo "$ReadsFileTemplate cannot be found in ${SLURM_SUBMIT_DIR}. Please upload it." >&2
+    exit 1
+fi
 
+#==================================================================================================
 
 cd ${StrainX}
-LC_ALL=C ${BarrnapDir}/barrnap --threads $SLURM_NTASKS --outseq ${StrX}_ribosomal_seqs_ONLY.fasta $InputFasta
 
+# Create a new reads file with bash parameter substitution.
+( echo "cat <<EOF >${ReadsFileStrainX}";
+  cat $SLURM_SUBMIT_DIR/${ReadsFileTemplate};
+  echo "EOF"; 
+) > temp.txt
+. temp.txt # Source the temp.txt file, to actually create the desired reads file!
 
+#rm temp.txt # The temporary file can be deleted since we do not need it anymore!
 
-<< ////
-	FURTHER STEPS NEEDED:
-	Blast search the barrnap results. 
-	Download the most relevant genomes and use them as references from now on.
-	Save the Downloaded NCBI genomes in the References directory on the server!
-	Reference sequences can be checked with Bandage if blasted against the scaffolds from Spades output. From these blast results and by coloring the blast hits in Bandage we can see whether the Reference genome is actually a reference i.e. if it has blast hits with most of the scaffolds or not.
-////
+# Declare an array with all the kmers that we want kmergenie to search for
+kmers=( 65 85 97 101 119 125 133 155 187 )
 
+# Run kmergenie for each item in the array. 
+for i in "${kmers[@]}"
+do
+${KmergenieDir}/kmergenie ${ReadsFileStrainX} -k $i -t $SLURM_NTASKS -o ${StrainX}_${DateRun}_kmer_${i}.hist
+done
+
+rm *.histo *.pdf *.dat
+
+echo
 echo "==============================="
-echo "SLRUM job finished " `date`
+echo "SLURM job finished " `date`
 echo
 
 # finished commands

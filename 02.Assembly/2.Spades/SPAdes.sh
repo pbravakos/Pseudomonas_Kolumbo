@@ -26,7 +26,7 @@ generalInfo () {
 
 	This script takes as input one argument. It runs from the master folder of Spades and then we change directory to the directory of each specific Strain.	
 	For Strain 01 the correct usage is: 
-	$0 Strain01
+	./$0 Strain01
 
 END
 }
