@@ -2,13 +2,9 @@
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=11
-# #SBATCH --mem=128000
 #SBATCH --mem-per-cpu=4000
-# The default limit is 3000MB per core.
 #SBATCH --job-name="MegaCC"
 #SBATCH --output=MegaCC_job_%j.out
-#SBATCH --mail-user=pbravakos@hcmr.gr
-#SBATCH --mail-type=FAIL,END
 
 # for calculating the amount of time the job takes
 begin=$(date +%s)

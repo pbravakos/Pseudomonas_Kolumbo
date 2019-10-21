@@ -83,9 +83,6 @@ do
 
 done
 
-
-
-
 # We will use the fasta2relaxedPhylip perl script to turn the fasta MSA to a relaxed, sequential phylip format.
 ${PhylogenomicDir}/fasta2relaxedPhylip.pl -f ${GuidanceMSA} -o ${Gene}_MSA_relaxed.phy > ${Gene}.log
 
