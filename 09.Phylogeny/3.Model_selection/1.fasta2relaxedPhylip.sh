@@ -32,8 +32,6 @@ generalInfo () {
 	This script runs in the Anvio Phylogenomics found in $SLURM_SUBMIT_DIR.
 	In order to run it, we should give one argument, the gene of interest e.g.:
 	sbatch $0  POG090900GE # for slurm
-	or
-	bash $0 
 	
 	NOTE:
 	Here we want to create an MSA to be used as input in CodeML (part of PAML). For this reason we use the MSA output from Guidance.

@@ -29,8 +29,7 @@ generalInfo () {
     cat <<END
 
 	This script runs in the Anvio Phylogenomics ElConcatenero master directory. In order to run it, the command should be like this:
-	sbatch $0   
- 
+	sbatch $0
 
 	# IMPORTANT
 	We should have finished with the alignment of each separate gene before running this program. These MSAs should be in ${MSADir}.

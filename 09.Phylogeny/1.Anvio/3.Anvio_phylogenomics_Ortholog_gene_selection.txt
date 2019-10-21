@@ -2,7 +2,7 @@
 
 # Please check the online tutorial here http://merenlab.org/2017/06/07/phylogenomics/#working-with-fasta-files
 
-# Our goal is to find which genes are we going to keep for downstream phylogenomics analysis.
+# Our goal is to find which genes we are going to keep for downstream phylogenomics analysis.
 # Only genes that are present in all genomes databases will be kept!
 
 # The total number of genome databases that we have created till now can be found by the following command.
@@ -32,16 +32,16 @@ anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.
 ```
 
 
-# Genes chosen have to be conserved. For this reason usually ribosomal genes are chosen!
-# We searched for the OrthodB genes in the OrthoDB web site https://www.orthodb.org/?singlecopy=1&level=286&species=286
-# For example the next 30S (small subunit) ribosomal genes seem to be rather conserved
+Genes chosen have to be conserved. For this reason usually ribosomal genes are chosen!
+We searched for the OrthodB genes in the OrthoDB web site https://www.orthodb.org/?singlecopy=1&level=286&species=286
+For example the next 30S (small subunit) ribosomal genes seem to be rather conserved
 # POG090903HI,POG090902MV,POG09090004,POG090900O9,POG09090188,POG090901ZM,POG090900YW,POG090901TG,POG0909039Q,POG0909032E,POG090901TJ,POG090901ZB,POG09090095,POG090900UZ,POG0909008M,POG090900IU
 
 
 
 
 
-# The following command will give you the concatenated amino acid sequences for the chosen genes:
+The following command will give us the concatenated amino acid sequences for the chosen genes:
 
 ```
 anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.tsv \
@@ -54,19 +54,20 @@ anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.
                                 --align-with muscle \
                                 --get-aa-sequences
 ```
-# The following is the anvio output of the previous command that can help us 
-# decide on which genes to keep and which to discard! 
-                               
+
+The following is the anvio output of the previous command that can help us decide on which genes to keep and which to discard! 
+
+```                               
 WARNING
 ===============================================
 The `--min-num-bins-gene-occurs` parameter caused the removal of 3 genes from
 your analysis because they occurred in less than 107 bins/genomes in your
 analysis. This is the list of genes that gon' buhbye: POG09090227, POG0909000A,
 POG0909024E, POG090901ZB,POG0909001O.
+```
 
 
-
-# Also run the following command to check which genomes (or bins!) are missing the genes.
+Also run the following command to check which genomes (or bins!) are missing the genes.
 
 ```
 anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.tsv \
@@ -79,9 +80,8 @@ anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.
                                 --align-with muscle
 ```
 
-# The following is an example of the anvio output of the previous command that can help us 
-# decide on which genes to keep and which to discard! 
 
+```
 WARNING
 ===============================================
 The `--max-num-genes-missing-from-bin` flag caused the removal of 25 bins (or
@@ -99,7 +99,7 @@ Pseudomonas_koreensis_CRS05-R5_4043, Str07_Pilon_CLA_Blast,
 Pseudomonas_veronii_R02_5004, Pseudomonas_parafulva_CRS01-1_3001,
 Pseudomonas_entomophila_L48_117, Pseudomonas_sp_Os17_Os17_4108,
 Pseudomonas_aeruginosa_IOMTU_133_3923, Pseudomonas_aeruginosa_ATCC_27853_3989
-
+```
 
 ```
 anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.tsv \
@@ -125,6 +125,3 @@ anvi-get-sequences-for-hmm-hits --external-genomes Pseudomonas_external_genomes.
                                 --align-with muscle
 
 ```
-
-
-

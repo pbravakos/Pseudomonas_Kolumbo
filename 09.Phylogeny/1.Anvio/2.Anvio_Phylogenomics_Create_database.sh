@@ -36,8 +36,8 @@ generalInfo () {
         sbatch $0 Pseudomonas_stutzeri_1W1-1A.fna
 
         WARNING!!
-        Fasta files names have to have only ONE dot (.) and 
-        the extension has to be different than ".fasta", for example it could be ".fna" 
+        It is advised fasta files names to have only ONE dot (.) and 
+        the extension to be different than ".fasta", for example it could be ".fna" 
 
         This is the Anvio phylogenomics pipeline. Check the tutorials:
         http://merenlab.org/2017/06/07/phylogenomics/ "An anvi'o workflow for phylogenomics" and
