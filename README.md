@@ -11,7 +11,7 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 | SUB6455861 | 
 
 | Biosample    |  |
-| ------------ | :-----------: |
+| :------------: | :-----------: |
 | *Accession*  | *Sample Name* | 
 | SAMN13075197 | Pseudomonas stutzeri Strain01 | 
 | SAMN13075198 | Pseudomonas stutzeri Strain02 |  
