@@ -13,7 +13,7 @@ SUB6455861
 ### Biosample:
 **Accession     Sample Name**  
 SAMN13075197    Pseudomonas stutzeri Strain01  
-SAMN13075198	  Pseudomonas stutzeri Strain02  	
+SAMN13075198	  Pseudomonas stutzeri Strain02  
 SAMN13075199	  Pseudomonas stutzeri Strain03  
 SAMN13075200	  Pseudomonas balerarica Strain04  
 SAMN13075201	  Pseudomonas aeruginosa Strain05  
@@ -25,7 +25,7 @@ SAMN13075206	  Pseudomonas stutzeri Strain10
 SAMN13075207	  Pseudomonas balearica Strain11  
 SAMN13075208	  Pseudomonas stutzeri Strain12  
 SAMN13075209	  Pseudomonas stutzeri Strain13  
-SAMN13075210	  Pseudomonas stutzeri Strain14  	
+SAMN13075210	  Pseudomonas stutzeri Strain14  
 SAMN13075211	  Pseudomonas aeruginosa Strain16  
 SAMN13075212	  Pseudomonas stutzeri Strain18  
 SAMN13075213	  Pseudomonas aeruginosa Strain19  
