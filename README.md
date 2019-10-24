@@ -5,9 +5,11 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 
 Please be warned that in order for these scripts to be used in any other system, significant changes should be applied.
 
-Bioproject: SUB6455861  
-**Accession	Sample Name**  
-SAMN13075197	Pseudomonas stutzeri Strain01  
+## Bellow are the NCBI submissions relevant to this project:
+### Bioproject: SUB6455861 
+### Biosample:
+**Accession Sample Name**  
+SAMN13075197  Pseudomonas stutzeri Strain01  
 SAMN13075198	Pseudomonas stutzeri Strain02  	
 SAMN13075199	Pseudomonas stutzeri Strain03  
 SAMN13075200	Pseudomonas balerarica Strain04  
