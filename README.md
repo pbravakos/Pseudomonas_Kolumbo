@@ -8,10 +8,10 @@ Please be warned that in order for these scripts to be used in any other system,
 ## NCBI submissions relevant to this project:
 
 ### Bioproject: 
-SUB6455861 
+| Accession | SUB6455861 | 
 
 ### Biosample:
-|Accession   | Sample Name | 
+| Accession   | Sample Name | 
 | ------------ | :-----------: |
 | SAMN13075197 | Pseudomonas stutzeri Strain01 | 
 | SAMN13075198 | Pseudomonas stutzeri Strain02 |  
