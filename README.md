@@ -1,8 +1,11 @@
 # Bacterial genome analysis pipeline
-<p>This is the pipeline for the genome assembly, genome annotation, pangenome and phylogenomic analysis of strains of the prokaryotic genus <em>Pseudomonas</em> isolated from Kolumbo, Santorini, Greece. Paper is under preparation. </p>
-<p>Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by the SLURM v.16.05.9 manager of the [High Perfomance Computer](https://hpc.hcmr.gr/) of [IMBBC HCMR](http://www.imbbc.hcmr.gr/).</p>
-<p>Please be warned that in order for these scripts to be used in any other system, significant changes should be applied.</p>
-<p>Bioproject: SUB6455861  
+This is the pipeline for the genome assembly, genome annotation, pangenome and phylogenomic analysis of strains of the prokaryotic genus <em>Pseudomonas</em> isolated from Kolumbo, Santorini, Greece. Paper is under preparation.
+
+Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by the SLURM v.16.05.9 manager of the [High Perfomance Computer](https://hpc.hcmr.gr/) of [IMBBC HCMR](http://www.imbbc.hcmr.gr/).
+
+Please be warned that in order for these scripts to be used in any other system, significant changes should be applied.
+
+Bioproject: SUB6455861  
 **Accession	Sample Name**  
 SAMN13075197	Pseudomonas stutzeri Strain01  
 SAMN13075198	Pseudomonas stutzeri Strain02  	
@@ -27,4 +30,3 @@ SAMN13075216	Pseudomonas balearica Strain22
 SAMN13075217	Pseudomonas aeruginosa Strain23  
 SAMN13075218	Pseudomonas stutzeri Strain24  
 SAMN13075219	Pseudomonas stutzeri Strain25
-</p>
