@@ -3,7 +3,7 @@
 <p>Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by the SLURM v.16.05.9 manager of the [High Perfomance Computer](https://hpc.hcmr.gr/) of [IMBBC HCMR](http://www.imbbc.hcmr.gr/).</p>
 <p>Please be warned that in order for these scripts to be used in any other system, significant changes should be applied.</p>
 <p>Bioproject: SUB6455861  
-**Accession	Sample Name**	
+**Accession	Sample Name**  
 SAMN13075197	Pseudomonas stutzeri Strain01  
 SAMN13075198	Pseudomonas stutzeri Strain02  	
 SAMN13075199	Pseudomonas stutzeri Strain03  
