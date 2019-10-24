@@ -11,9 +11,10 @@ Please be warned that in order for these scripts to be used in any other system,
 SUB6455861 
 
 ### Biosample:
-**Accession Sample Name**  
-SAMN13075197    Pseudomonas stutzeri Strain01  
-SAMN13075198	  Pseudomonas stutzeri Strain02  
+|**Accession   | Sample Name** | 
+| ------------ | :-----------: |
+| SAMN13075197 | Pseudomonas stutzeri Strain01 | 
+| SAMN13075198 | Pseudomonas stutzeri Strain02 |  
 SAMN13075199	  Pseudomonas stutzeri Strain03  
 SAMN13075200	  Pseudomonas balerarica Strain04  
 SAMN13075201	  Pseudomonas aeruginosa Strain05  
