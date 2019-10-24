@@ -6,7 +6,7 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 ## NCBI submissions relevant to this project:
 
 | Bioproject |
-| ------------ |
+| :------------: |
 | *Accession* | 
 | SUB6455861 | 
 
@@ -38,6 +38,6 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 | SAMN13075219 | Pseudomonas stutzeri Strain25 |
 
 | SRA |
-| ------ |
+| :------: |
 | *Accession* | 
 | SUB6455848 |
