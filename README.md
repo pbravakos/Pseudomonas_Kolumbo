@@ -38,3 +38,7 @@ Please be warned that in order for these scripts to be used in any other system,
 | SAMN13075217 | Pseudomonas aeruginosa Strain23 |
 | SAMN13075218 | Pseudomonas stutzeri Strain24 |
 | SAMN13075219 | Pseudomonas stutzeri Strain25 |
+
+| SRA |
+| ------ |
+| SUB6455848 |
