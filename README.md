@@ -8,7 +8,7 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 | Bioproject |
 | :------------: |
 | *Accession* | 
-| SUB6455861 | 
+| PRJNA579073 | 
 
 | Biosample    |  |
 | :------------: | :-----------: |
@@ -36,8 +36,3 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 | SAMN13075217 | Pseudomonas aeruginosa Strain23 |
 | SAMN13075218 | Pseudomonas stutzeri Strain24 |
 | SAMN13075219 | Pseudomonas stutzeri Strain25 |
-
-| SRA |
-| :------: |
-| *Accession* | 
-| SUB6455848 |
