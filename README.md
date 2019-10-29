@@ -10,7 +10,7 @@ Scripts presented here run in Bash v.4.4.12 and were prepared to be handled by t
 | *Accession* | 
 | PRJNA579073 | 
 
-| Biosample    | | Assembly Accession| | Organism | 
+| Biosample    | Assembly Accession | Organism | 
 | :------------: | :-----------: | :-----------: |  
 | SAMN13075197 | WIGI00000000 | Pseudomonas stutzeri Strain01 | 
 | SAMN13075198 | WIGH00000000 | Pseudomonas stutzeri Strain02 |  
