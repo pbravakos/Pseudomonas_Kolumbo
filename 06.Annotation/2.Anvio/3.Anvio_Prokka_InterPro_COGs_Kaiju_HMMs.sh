@@ -296,6 +296,13 @@ echo
 
 	FOR PIRSF
 	Now it is time to go online to 	https://pir.georgetown.edu/pirwww/search/batch_sf.shtml and copy and paste the IDs found in the file "${StrX}_PIRSF_InterproScan_IDS.txt". Then, click on the "Save Results As: Table", download the output and rename the file to "${StrX}_PIRSF.tsv". Upload "${StrX}_PIRSF.tsv" to the correct folder on the server, and we are ready to go!
+
+	NOTE:
+	Commands if we want to make contamination graphs based on the hmm profiles:
+	anvi-script-gen_stats_for_single_copy_genes.py ${StrX}_Pilon_contigs.db # This will create the files ${StrX}_Pilon_contigs.db.hits and ${StrX}_Pilon_contigs.db.genes 
+	anvi-script-gen_stats_for_single_copy_genes.R ${StrX}_Pilon_contigs.db.hits ${StrX}_Pilon_contigs.db.genes
+
+
 ////
 echo
 echo
