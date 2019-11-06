@@ -42,7 +42,7 @@ fi
 [[ ! -d ${1} ]] && { echo "Directory ${1} cannot be not found!" >&2; exit 1; }
 
 # Start a job dependency to move the Sdtout file to the correct folders
-${HOME}/sbatch --dependency=afterany:$SLURM_JOB_ID Move_Slurm_output_files.sh $SLURM_JOB_NAME $SLURM_JOB_ID $1
+sbatch --dependency=afterany:$SLURM_JOB_ID Move_Slurm_output_files.sh $SLURM_JOB_NAME $SLURM_JOB_ID $1
 
 # INITIAL PARAMETERS
 StrainX=$1
