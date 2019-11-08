@@ -5,6 +5,8 @@
 #SBATCH --job-name="Spades"
 #SBATCH --output=Spades_job_%j.out
 
+# for calculating the amount of time the job takes
+begin=$(date +%s)
 
 # Some job specific info
 echo "Job ID is = " $SLURM_JOBID
