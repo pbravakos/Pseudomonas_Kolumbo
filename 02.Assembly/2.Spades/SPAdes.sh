@@ -56,6 +56,27 @@ OutputDir=$SLURM_SUBMIT_DIR/${StrainX}/${Iteration}
 YamlFileTemplate=Reads.yaml
 YamlFileStrainX=${StrainX}_reads.yaml
 
+# Fist, create the yaml file with the correct reads, for each 
+cat > $YamlFileTemplate <<"EOF"
+
+- "left reads":
+  - "${HOME}/Pseudomonas/BBmerge/${StrainX}/${StrX}_${DateRun}_Read1_unmerged.fastq"
+  "merged reads":
+  - "${HOME}/Pseudomonas/BBmerge/${StrainX}/${StrX}_${DateRun}_merged.fastq"
+  "orientation": "fr"
+  "right reads":
+  - "${HOME}/Pseudomonas/BBmerge/${StrainX}/${StrX}_${DateRun}_Read2_unmerged.fastq"
+  "single reads":
+  - "${HOME}/Pseudomonas/Prinseq/${StrainX}/Filtering/${StrX}_${DateRun}_prinseq_good_R_1_singletons.fastq"
+  - "${HOME}/Pseudomonas/Prinseq/${StrainX}/Filtering/${StrX}_${DateRun}_prinseq_good_R_2_singletons.fastq"
+
+  "type": "paired-end"
+EOF
+
+
+
+
+
 #DateRun=Nov18a  # This parameter is needed for the bash substitution in the reads yaml file. Not to be deleted!
 # Kmer selection for each Strain based on the kmergenie results.
 #if [[ $StrainX = Strain09 ]]; then
@@ -180,7 +201,7 @@ cd ${StrainX}/${Iteration}
 ) > $SLURM_SUBMIT_DIR/${StrainX}/${Iteration}/temp.yml
 . $SLURM_SUBMIT_DIR/${StrainX}/${Iteration}/temp.yml # Source the temp file, to actually create the desired yaml file!
 
-#rm temp.yml  # The temp file is no longer needed and can be deleted.
+rm temp.yml  # The temp file is no longer needed and can be deleted.
 
 
 
@@ -188,7 +209,7 @@ python3 ${SpadesDir}/spades.py --only-assembler --dataset ${YamlFileStrainX} --c
 
 
 # NEXT STEPS:
-# Open fastg output with Bandage to check for contamination, and either continue with the next steps of pipeline or go back to the filtering steps to reduce contamination.
+# Open fastg output with Bandage to check for contamination, and either continue with scaffolding, or start the optional decontamination pipeline.
 
 echo "==============================="
 echo "SBATCH job finished " `date`
