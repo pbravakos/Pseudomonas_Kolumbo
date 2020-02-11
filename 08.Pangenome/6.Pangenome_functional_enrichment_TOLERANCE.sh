@@ -19,7 +19,7 @@ echo
         http://merenlab.org/2016/11/08/pangenomics-v2/#creating-a-quick-pangenome-with-functions "Creating a quick pangenome with functions"
 	
 	This script run in the Anvio Pangenomics Prokka directory. To run the script, we need to have all the needed files (e.g. fix_functional_occurrence_table.py) and dependencies (blastp, mcl) and then we simply run the command:
-	sbatch $0
+	./$0
 
 	IMPORTANT
         We run this script after we have created the pangenome!
@@ -27,9 +27,6 @@ echo
 	IMPORTANT
 	We have to prepare a text file with all the strain names e.g. Strain01, that we want to analyze here, one strain per line, with a second column which will categorize the strains into groups. The selection of the groups could be based on various criteria e.g. phylogenetic, ANI. This file is ${CategoricalTxt}, so please check the creation of this file at the start of this script!
 	
-	IMPORTANT!
-	We have set the bins for the core pangenomes of interest in the interactive mode in order to be able to extract the gene clusters.
-
 ////
 
 
@@ -39,10 +36,21 @@ OutputPanDir=${WorkDir}/PSEUDOMONAS_PROKKA
 PanDatabase=Pseudomonas_Prokka_Pangenome-PAN.db
 GenDatabase=${WorkDir}/PSEUDOMONAS_COLUMBO_PROKKA-GENOMES.db
 CategoricalTxt=Pseudomonas_internal_layer_data.txt
-Category=Tolerance  # This should match one of the column names in the $CategoricalTxt text file
+
+Category=Species  # This should match one of the column names in the $CategoricalTxt text file
 # Next define the 2 groups that we are going to compare here.
-Group1=Low
-Group2=High
+Group1=Low_tolerance
+Group2=High_tolerance
+
+# The following, have to be the same as the names we gave in the previous part of this pipeline.
+CollectionName="Tolerance"
+BinName1="Core"
+BinName2="Low_tolerance_unique"
+BinName3="High_tolerance_unique"
+
+
+
+#--------------------------------------------------------------------------------------------------------
 
 #AnnotationSource="Rast FigFam"  # This should be one of the annotation sources already available in the Pangenome Genome Storage. If you want to check the full list of Annotation Sources run this command: 
 # anvi-get-enriched-functions-per-pan-group -g ${GenDatabase} -p ${OutputPanDir}/${PanDatabase} --list-annotation-sources -o dokimi.txt --category Species
@@ -67,27 +75,25 @@ echo "		Analysis begins		"
 echo
 echo
 
-# First we have to arrange the gene clusters into bins, in the interactive mode (with the "search gene clusters using filters" and "append splits to selected bin" from the search tab in the interactive mode).
-# The collection we created in the interactive mode was named as "default".
+
 # We can check for the available collections with the following command:
 # anvi-export-collection -p PSEUDOMONAS_PROKKA/Pseudomonas_Prokka_Pangenome-PAN.db --list-collections 
-# We have created the following 4 bins:
-# "aeruginosa_core_genome", "aeruginosa_all_except_Strain05", "Core_Genome" and "stutzeri_core_genome"
-# Now, we can extract the binned clusters from the "default" collection with the following command:
-anvi-export-collection -p PSEUDOMONAS_PROKKA/Pseudomonas_Prokka_Pangenome-PAN.db -C default -O GC_bins
+
+# Now, we can extract the binned clusters from the selected collection with the following command:
+anvi-export-collection -p PSEUDOMONAS_PROKKA/Pseudomonas_Prokka_Pangenome-PAN.db -C ${CollectionName} -O GC_bins
 # The above command outputs two files:
 # 1. "GC_bins-info.txt" which contains all the available bins for the particular collection (and the corresponding color for the interactive mode).
 # 2. "GC_bins.txt" which contains all the gene clusters grouped into each bin.
 
 # Next, we want to create a file that will be used as input for the grep command, to search for all the Gene Clusters that we are interested in.
-awk 'BEGIN{FS="\t";OFS="\t"} $2=="Core_Genome" {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_Core_GCs_pattern.txt
+awk -v bin="${BinName1}" 'BEGIN{FS="\t";OFS="\t"} $2==bin {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_${BinName1}_GCs_pattern.txt
 
-awk 'BEGIN{FS="\t";OFS="\t"} $2=="stutzeri_core_genome" {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_Core_${Group1}_GCs_pattern.txt
+awk -v bin="${BinName2}" 'BEGIN{FS="\t";OFS="\t"} $2==bin {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_${BinName2}_GCs_pattern.txt
 
-awk 'BEGIN{FS="\t";OFS="\t"} $2=="aeruginosa_core_genome" {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_Core_${Group2}_GCs_pattern.txt
+awk -v bin="${BinName3}" 'BEGIN{FS="\t";OFS="\t"} $2==bin {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_${BinName3}_GCs_pattern.txt
 
-awk 'BEGIN{FS="\t";OFS="\t"} $2=="aeruginosa_all_except_Strain05" {print $1}' GC_bins.txt | tr '\n' '\|' > Grep_Core_${Group2}_no_Strain05_GCs_pattern.txt
-
+# Next, create the appropriate directories to store the results.
+mkdir -p CORE Core_${Group1}_UNIQUE Core_${Group1} Core_${Group2}_UNIQUE Core_${Group2}
 
 
 # Next declare an array with all the annotation sources we have in the Anvio database.
@@ -135,10 +141,10 @@ cd ${OutDir}
 
 # Copy, from the working directory, all the needed files, in order to work in the current directory.
 cp ${WorkDir}/fix_functional_occurence_table.py .
-cp ${WorkDir}/Grep_Core_GCs_pattern.txt .
-cp ${WorkDir}/Grep_Core_${Group1}_GCs_pattern.txt .
-cp ${WorkDir}/Grep_Core_${Group2}_GCs_pattern.txt .
-cp ${WorkDir}/Grep_Core_${Group2}_no_Strain05_GCs_pattern.txt .
+cp ${WorkDir}/Grep_${BinName1}_GCs_pattern.txt .
+cp ${WorkDir}/Grep_${BinName2}_GCs_pattern.txt .
+cp ${WorkDir}/Grep_${BinName3}_GCs_pattern.txt .
+
 
 # First, we have to create the tab delimited file which will group our strains, according to our needs.
 TAB=$'\t' 
@@ -156,7 +162,6 @@ Strain09${TAB}${Group1}
 Strain10${TAB}${Group1}
 Strain11${TAB}${Group1}
 Strain12${TAB}${Group1}
-Strain13${TAB}${Group1}
 Strain14${TAB}${Group1}
 Strain16${TAB}${Group2}
 Strain18${TAB}${Group1}
@@ -166,7 +171,6 @@ Strain21${TAB}${Group2}
 Strain22${TAB}${Group1}
 Strain23${TAB}${Group2}
 Strain24${TAB}${Group1}
-Strain25${TAB}${Group1}
 EOF
 
 
@@ -288,10 +292,9 @@ for i in $(seq 1 $numCol); do
     counter=$((counter + 1))
 done
 
-# Next, we want to create a new file with only one column, which will count the number of Gene Clusters per row.
-#grep -E -o -n -f Grep_Core_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | awk 'BEGIN{print "Num_Core_GCs"} {$1=$1;print $1}' > Num_Core_GCs
-#grep -E -o -n -f Grep_Core_${Group1}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | awk -v group="$Group1" 'BEGIN{print "Num_"group"_GCs"} {$1=$1;print $1}' > Num_Core_${Group1}_GCs
-#grep -E -o -n -f Grep_Core_${Group2}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | awk -v group="$Group2" 'BEGIN{print "Num_"group"_GCs"} {$1=$1;print $1}' > Num_Core_${Group2}_GCs
+#------------------------------------------------------------------------------------------------------------------------
+
+# 
 LineNum=`wc -l PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -f1 -d" "`
 for i in $( seq 2 $LineNum ); do 
     echo "0 $i" 
@@ -302,54 +305,87 @@ for i in $( seq 2 $LineNum ); do
 done > All_lines_GCs
 
 # We first try to extract the number of core gene clusters that exist in each line.
-grep -E -o -n -f Grep_Core_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_GCs.lines
+grep -E -o -n -f Grep_${BinName1}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_GCs.lines
 cat Core_GCs.lines All_lines | sort -n -u -k2 | awk 'BEGIN{print "Num_Core_GCs"} {print $1}' > Num_Core_GCs
 # Next, we try to extract the core gene clusters that exist in each line.
-grep -E -n -o -f Grep_Core_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > Core_GCs.list
+grep -E -n -o -f Grep_${BinName1}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > Core_GCs.list
 cat Core_GCs.list All_lines_GCs | sort -n -u -k2 | awk 'BEGIN{print "Core_GCs"} {print $1}' > Core_GCs
 
 
 # Next, we try to extract the number of ${Group1} gene clusters that exist in each line.
-grep -E -o -n -f Grep_Core_${Group1}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_${Group1}_GCs.lines
+grep -E -o -n -f Grep_${BinName2}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_${Group1}_GCs.lines
 cat Core_${Group1}_GCs.lines All_lines | sort -n -u -k2 | awk -v group="$Group1" 'BEGIN{print "Num_"group"_GCs"} {print $1}' > Num_Core_${Group1}_GCs
 # Next, we try to extract the ${Group1} gene clusters that exist in each line.
-grep -E -n -o -f Grep_Core_${Group1}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > ${Group1}_GCs.list
+grep -E -n -o -f Grep_${BinName2}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > ${Group1}_GCs.list
 cat ${Group1}_GCs.list All_lines_GCs | sort -n -u -k2 | awk -v group="$Group1" 'BEGIN{print group"_GCs"} {print $1}' > Core_${Group1}_GCs
 
 
 # Next, we try to extract the number of ${Group2} gene clusters that exist in each line.
-grep -E -o -n -f Grep_Core_${Group2}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_${Group2}_GCs.lines
+grep -E -o -n -f Grep_${BinName3}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_${Group2}_GCs.lines
 cat Core_${Group2}_GCs.lines All_lines | sort -n -u -k2 | awk -v group="$Group2" 'BEGIN{print "Num_"group"_GCs"} {print $1}' > Num_Core_${Group2}_GCs
 # Next, we try to extract the ${Group2} gene clusters that exist in each line.
-grep -E -n -o -f Grep_Core_${Group2}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > ${Group2}_GCs.list
+grep -E -n -o -f Grep_${BinName3}_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > ${Group2}_GCs.list
 cat ${Group2}_GCs.list All_lines_GCs | sort -n -u -k2 | awk -v group="$Group2" 'BEGIN{print group"_GCs"} {print $1}' > Core_${Group2}_GCs
 
 
-# Next, we try to extract the number of no_Strain05_${Group2} gene clusters that exist in each line.
-grep -E -o -n -f Grep_Core_${Group2}_no_Strain05_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | cut -d : -f 1 | uniq -c | sed -E 's/([[:digit:]]) ([[:digit:]])/\1\t\2/g;s/ //g;s/\t/ /g' > Core_${Group2}_no_Strain05_GCs.lines
-cat Core_${Group2}_no_Strain05_GCs.lines All_lines | sort -n -u -k2 | awk -v group="$Group2" 'BEGIN{print "Num_"group"_no_Strain05_GCs"} {print $1}' > Num_Core_${Group2}_no_Strain05_GCs
-# Next, we try to extract the no_Strain05_${Group2} gene clusters that exist in each line.
-grep -E -n -o -f Grep_Core_${Group2}_no_Strain05_GCs_pattern.txt PSEUDOMONAS_${AnnotName}_enriched-function_${Category}.txt | awk -F':' 'NF>1{a[$1] = a[$1]","$2};END{for(i in a)print a[i],i}' | sed s/^,//g | sort -n -k2 > ${Group2}_no_Strain05_GCs.list
-cat ${Group2}_no_Strain05_GCs.list All_lines_GCs | sort -n -u -k2 | awk -v group="$Group2" 'BEGIN{print group"_no_Strain05_GCs"} {print $1}' > Core_${Group2}_no_Strain05_GCs
 
 
 # Next, we will paste together all the columns that were extracted in separate files
-paste category core_in_group core occurrence_in_group occurrence_outside_of_group gene_clusters_ids function_accession ${AnnotName} Num_Core_GCs Num_Core_${Group1}_GCs Num_Core_${Group2}_GCs Num_Core_${Group2}_no_Strain05_GCs Core_GCs Core_${Group1}_GCs Core_${Group2}_GCs Core_${Group2}_no_Strain05_GCs > ${Group1}_${Group2}_${AnnotName}_final.tsv
+paste category core_in_group core occurrence_in_group occurrence_outside_of_group gene_clusters_ids function_accession ${AnnotName} Num_Core_GCs Num_Core_${Group1}_GCs Num_Core_${Group2}_GCs Core_GCs Core_${Group1}_GCs Core_${Group2}_GCs > ${Group1}_${Group2}_${AnnotName}_final.tsv
 
 
 # Remove the files we do not need any more.
-rm category core_in_group core occurrence_in_group occurrence_outside_of_group gene_clusters_ids function_accession ${AnnotName} Num_Core_GCs Num_Core_${Group1}_GCs Num_Core_${Group2}_GCs Num_Core_${Group2}_no_Strain05_GCs Core_GCs Core_${Group1}_GCs Core_${Group2}_GCs Core_${Group2}_no_Strain05_GCs All_lines Core_GCs.lines Core_${Group1}_GCs.lines Core_${Group2}_GCs.lines Core_${Group2}_no_Strain05_GCs.lines Core_GCs.list ${Group1}_GCs.list ${Group2}_GCs.list ${Group2}_no_Strain05_GCs.list
+rm category core_in_group core occurrence_in_group occurrence_outside_of_group gene_clusters_ids function_accession ${AnnotName} Num_Core_GCs Num_Core_${Group1}_GCs Num_Core_${Group2}_GCs Core_GCs Core_${Group1}_GCs Core_${Group2}_GCs All_lines* Core_GCs.lines Core_${Group1}_GCs.lines Core_${Group2}_GCs.lines Core_GCs.list ${Group1}_GCs.list ${Group2}_GCs.list
+
+
+# To help select the correct columns (fields) in the upcoming awk commands, we present bellow the columns and the respective column number from the file ${Group1}_${Group2}_${AnnotName}_final.tsv
+#1.  category 
+#2.  core_in_group 
+#3.  core 
+#4.  occurrence_in_group 
+#5.  occurrence_outside_of_group 
+#6.  gene_clusters_ids 
+#7.  function_accession 
+#8.  ${AnnotName} 
+#9.  Num_Core_GCs 
+#10. Num_Core_${Group1}_GCs 
+#11. Num_Core_${Group2}_GCs 
+#12. Core_GCs 
+#13. Core_${Group1}_GCs 
+#14. Core_${Group2}_GCs 
+
+
+
+# To get the core genome (genes found in all strains of the genus irrespective of the specific species). We also have to make the output unique because we have two groups and each row is duplicated. 
+awk -v annot="${AnnotName}" 'BEGIN{FS="\t";OFS="\t";print "source", "accession","function","Core_Gene_Clusters","Num_Core_GCs"} $3=="True" {print annot,$7,$8,$12,$9}' ${Group1}_${Group2}_${AnnotName}_final.tsv | awk -F"\t" '!_[$2]++' > Functions_core_${AnnotName}.tsv
+
+# Next, copy the file to a directory, where all results will be kept.
+cp Functions_core_${AnnotName}.tsv ../CORE
+
 
 
 # First we want to get the functions that exist in ALL strains that belong to the first group and only to the first group.
-awk -v annot="${AnnotName}" -v group="$Group1" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function","Core_Gene_Clusters","Num_"group"_GCs"}  group==$1 && $2=="True" && $5=="0.00" {print $1,annot,$7,$8,$14,$10}' ${Group1}_${Group2}_${AnnotName}_final.tsv > Functions_only_${Group1}_${AnnotName}.tsv
-# Next, we get the functions that exist in all strains of the second group and only to the second group.
-awk -v annot="${AnnotName}" -v group="$Group2" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function",group"_Gene_Clusters","Num_"group"_GCs"} group==$1 && $2=="True" && $5=="0.00" {print $1,annot,$7,$8,$15,$11}' ${Group1}_${Group2}_${AnnotName}_final.tsv  > Functions_only_${Group2}_${AnnotName}.tsv
-# To get the core genome (genes found in all strains of the genus irrespective of the specific species). We also have to make the output unique because we have two groups and each row is duplicated. 
-awk -v annot="${AnnotName}" 'BEGIN{FS="\t";OFS="\t";print "source", "accession","function","Core_Gene_Clusters","Num_Core_GCs"} $3=="True" {print annot,$7,$8,$13,$9}' ${Group1}_${Group2}_${AnnotName}_final.tsv | awk -F"\t" '!_[$2]++' > Functions_core_${AnnotName}.tsv
+awk -v annot="${AnnotName}" -v group="$Group1" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function","Core_Gene_Clusters","Num_"group"_GCs"}  group==$1 && $2=="True" && $5=="0.00" {print $1,annot,$7,$8,$13,$10}' ${Group1}_${Group2}_${AnnotName}_final.tsv > Functions_${Group1}_UNIQUE_${AnnotName}.tsv
 
-# Finally, a special case for this analysis and only for this analysis. We want to get all the ${Group2} strains which do not include Strain05, because the latter one is missing genes.
-awk -v annot="${AnnotName}" -v group="$Group2" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function",group"_no_Strain05_GCs","Num_"group"_no_Strain05_GCs"} group==$1 && $4=="7.00" && $5=="0.00" {print $1,annot,$7,$8,$16,$12}' ${Group1}_${Group2}_${AnnotName}_final.tsv  > Functions_only_${Group2}_without_Strain05_${AnnotName}.tsv
+cp Functions_${Group1}_UNIQUE_${AnnotName}.tsv ../Core_${Group1}_UNIQUE
+
+# Next, we get the functions that exist in all strains of the first group.
+awk -v annot="${AnnotName}" -v group="$Group1" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function","Core_Gene_Clusters","Num_"group"_GCs"}  group==$1 && $2=="True" {print $1,annot,$7,$8,$13,$10}' ${Group1}_${Group2}_${AnnotName}_final.tsv > Functions_${Group1}_CORE_${AnnotName}.tsv
+
+cp Functions_${Group1}_CORE_${AnnotName}.tsv ../Core_${Group1}
+
+
+# Next, we get the functions that exist in all strains of the second group and only to the second group.
+awk -v annot="${AnnotName}" -v group="$Group2" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function",group"_Gene_Clusters","Num_"group"_GCs"} group==$1 && $2=="True" && $5=="0.00" {print $1,annot,$7,$8,$14,$11}' ${Group1}_${Group2}_${AnnotName}_final.tsv  > Functions_${Group2}_UNIQUE_${AnnotName}.tsv
+
+cp Functions_${Group2}_UNIQUE_${AnnotName}.tsv ../Core_${Group2}_UNIQUE
+
+
+# Next, we get the functions that exist in all strains of the second group.
+awk -v annot="${AnnotName}" -v group="$Group2" 'BEGIN{FS="\t";OFS="\t";print "group","source", "accession","function",group"_Gene_Clusters","Num_"group"_GCs"} group==$1 && $2=="True" {print $1,annot,$7,$8,$14,$11}' ${Group1}_${Group2}_${AnnotName}_final.tsv  > Functions_${Group2}_CORE_${AnnotName}.tsv
+
+cp Functions_${Group2}_CORE_${AnnotName}.tsv ../Core_${Group2}
+
 
 
 cd ${WorkDir}

@@ -2,7 +2,6 @@
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
-# #SBATCH --mem-per-cpu=6400
 #SBATCH --job-name="Pangenome_Internal"
 #SBATCH --output=Pangenome_Internal_job_%j.out
 
